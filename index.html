@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Happy Birthday Lux.y 🎂</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --pink:#ff6ec7;--gold:#ffd700;--purple:#7c3aed;--deep:#0d0221;
+  --safe-top:env(safe-area-inset-top,0px);
+  --safe-bottom:env(safe-area-inset-bottom,0px);
+}
+html,body{
+  height:100%;width:100%;overflow:hidden;
+  font-family:'Georgia',serif;
+  background:var(--deep);color:#fff;
+}
+
+/* ── STARFIELD ── */
+#stars{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none;}
+.star{
+  position:absolute;border-radius:50%;
+  background:#fff;opacity:0;
+  animation:twinkle ease-in-out infinite;
+}
+@keyframes twinkle{0%,100%{opacity:0;transform:scale(.4);}50%{opacity:.9;transform:scale(1);}}
+
+/* ── PIN SCREEN ── */
+#pin-screen{
+  position:fixed;inset:0;z-index:50;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  padding:calc(20px + var(--safe-top)) 20px calc(20px + var(--safe-bottom));
+  text-align:center;
+  background:radial-gradient(ellipse at 50% 30%,#2a0a4a,var(--deep) 70%);
+  transition:opacity .9s ease, transform .9s ease;
+}
+#pin-screen.hide{opacity:0;transform:scale(1.06);pointer-events:none;}
+
+.lock-icon{
+  font-size:64px;margin-bottom:20px;
+  animation:pulse-lock 2.5s ease-in-out infinite;
+}
+@keyframes pulse-lock{0%,100%{transform:scale(1);}50%{transform:scale(1.12);}}
+
+#pin-screen h1{
+  font-size:clamp(1.5rem,5vw,2.4rem);
+  margin-bottom:8px;
+  background:linear-gradient(90deg,var(--pink),var(--gold),var(--pink));
+  background-size:200% auto;
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  animation:shine 3s linear infinite;
+}
+@keyframes shine{to{background-position:200% center;}}
+#pin-screen p{opacity:.75;margin-bottom:28px;font-size:.95rem;font-family:sans-serif;line-height:1.5;}
+
+/* PIN BOXES */
+.pin-row{display:flex;gap:8px;margin-bottom:12px;justify-content:center;flex-wrap:wrap;}
+.pin-input{
+  width:52px;height:62px;
+  font-size:1.7rem;text-align:center;
+  border:2px solid #ff6ec755;
+  border-radius:14px;
+  background:rgba(255,255,255,.06);
+  color:#fff;outline:none;
+  transition:border-color .2s,box-shadow .2s,transform .2s;
+  font-family:monospace;
+}
+.pin-input:focus{
+  border-color:var(--gold);
+  box-shadow:0 0 18px #ffd70066;
+  transform:scale(1.07);
+}
+.pin-sep{
+  display:flex;align-items:center;
+  font-size:1.4rem;opacity:.4;padding:0 4px;
+}
+
+#unlock-btn{
+  margin-top:16px;
+  padding:14px 44px;font-size:1.05rem;
+  border:none;border-radius:50px;
+  background:linear-gradient(135deg,var(--pink),var(--gold));
+  color:#2a0a4a;font-weight:bold;font-family:sans-serif;
+  cursor:pointer;letter-spacing:1px;
+  transition:transform .2s, box-shadow .2s;
+  box-shadow:0 0 30px #ff6ec755;
+}
+#unlock-btn:hover{transform:scale(1.07);box-shadow:0 0 40px #ff6ec799;}
+#unlock-btn:active{transform:scale(.97);}
+
+#err-msg{color:#ff5566;margin-top:14px;min-height:22px;font-size:.9rem;font-family:sans-serif;}
+.hint{
+  margin-top:28px;font-size:.8rem;opacity:.4;
+  font-style:italic;font-family:sans-serif;line-height:1.6;
+}
+.shake{animation:shake .45s ease;}
+@keyframes shake{
+  0%,100%{transform:translateX(0);}
+  20%{transform:translateX(-8px);}
+  40%{transform:translateX(8px);}
+  60%{transform:translateX(-6px);}
+  80%{transform:translateX(6px);}
+}
+
+/* ── CELEBRATION ── */
+#celebration{
+  position:fixed;inset:0;z-index:40;
+  display:none;flex-direction:column;
+  align-items:center;justify-content:flex-start;
+  overflow-y:auto;overflow-x:hidden;
+  padding:calc(30px + var(--safe-top)) 20px calc(60px + var(--safe-bottom));
+  background:radial-gradient(ellipse at 50% 30%,#4a0e6b,var(--deep) 70%);
+  scroll-behavior:smooth;
+}
+#celebration.show{display:flex;}
+
+/* ── FIREWORK BURST on unlock ── */
+#burst-canvas{
+  position:fixed;inset:0;z-index:60;
+  pointer-events:none;
+  display:none;
+}
+
+/* ── TITLE ── */
+.cel-title{
+  font-size:clamp(2rem,9vw,4.5rem);
+  font-weight:900;
+  background:linear-gradient(90deg,var(--pink),var(--gold),#b06eff,var(--pink));
+  background-size:300% auto;
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  animation:shine 4s linear infinite, popIn .9s cubic-bezier(.34,1.56,.64,1) both;
+  line-height:1.1;text-align:center;
+  margin-bottom:6px;
+}
+@keyframes popIn{from{transform:scale(.3);opacity:0;}to{transform:scale(1);opacity:1;}}
+
+.cel-sub{
+  font-size:clamp(.9rem,2.5vw,1.3rem);
+  color:var(--gold);letter-spacing:3px;
+  font-family:sans-serif;text-align:center;
+  margin-bottom:28px;
+  animation:fadeUp 1s ease .6s both;
+}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:translateY(0);}}
+
+/* ── CAROUSEL ── */
+.carousel{
+  position:relative;
+  width:min(300px,80vw);height:min(300px,80vw);
+  margin-bottom:28px;
+  animation:fadeUp 1s ease .9s both;
+  flex-shrink:0;
+}
+.photo{
+  position:absolute;inset:0;
+  border-radius:22px;
+  background-size:cover;background-position:center;
+  border:4px solid var(--gold);
+  box-shadow:0 0 40px #ff6ec766;
+  opacity:0;transition:opacity 1.2s ease;
+  animation:floaty 4s ease-in-out infinite;
+}
+.photo.active{opacity:1;}
+@keyframes floaty{
+  0%,100%{transform:translateY(0) rotate(-1.5deg);}
+  50%{transform:translateY(-10px) rotate(1.5deg);}
+}
+
+/* ── MESSAGE CARD ── */
+.msg-card{
+  max-width:560px;width:100%;
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:20px;padding:24px 22px;
+  font-size:clamp(.9rem,2.2vw,1.05rem);
+  line-height:1.8;text-align:center;
+  color:rgba(255,255,255,.9);
+  animation:fadeUp 1s ease 1.2s both;
+  margin-bottom:28px;
+}
+.msg-card .name{color:var(--pink);font-weight:bold;font-size:1.1em;}
+.msg-card strong{color:var(--gold);}
+
+/* ── WISH SECTIONS ── */
+.wishes{
+  display:flex;flex-direction:column;gap:14px;
+  max-width:560px;width:100%;
+  animation:fadeUp 1s ease 1.5s both;
+  margin-bottom:28px;
+}
+.wish-item{
+  display:flex;align-items:flex-start;gap:14px;
+  background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:14px;padding:14px 16px;
+  text-align:left;
+  transition:transform .2s, background .2s;
+}
+.wish-item:hover{transform:translateX(4px);background:rgba(255,255,255,.09);}
+.wish-icon{font-size:1.6rem;flex-shrink:0;margin-top:2px;}
+.wish-text{font-size:.9rem;color:rgba(255,255,255,.8);line-height:1.6;font-family:sans-serif;}
+.wish-text b{color:var(--gold);}
+
+/* ── COUNTDOWN ── */
+.countdown-wrap{
+  animation:fadeUp 1s ease 1.8s both;
+  text-align:center;margin-bottom:24px;
+}
+.countdown-wrap p{font-size:.8rem;opacity:.5;font-family:sans-serif;letter-spacing:1px;margin-bottom:10px;}
+.countdown-nums{display:flex;gap:12px;justify-content:center;}
+.cd-block{
+  background:rgba(255,255,255,.07);
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:12px;padding:12px 16px;min-width:64px;
+  text-align:center;font-family:monospace;
+}
+.cd-num{font-size:1.6rem;font-weight:bold;color:var(--gold);}
+.cd-label{font-size:.65rem;opacity:.5;font-family:sans-serif;letter-spacing:1px;margin-top:2px;}
+
+/* ── FLOATING ELEMENTS ── */
+.heart,.sparkle,.petal{
+  position:fixed;pointer-events:none;z-index:5;will-change:transform,opacity;
+}
+.heart{font-size:22px;animation:floatUp linear infinite;}
+@keyframes floatUp{
+  0%{transform:translateY(100vh) scale(.4) rotate(0deg);opacity:0;}
+  10%{opacity:1;}
+  90%{opacity:1;}
+  100%{transform:translateY(-15vh) scale(1.2) rotate(360deg);opacity:0;}
+}
+.sparkle{
+  width:5px;height:5px;border-radius:50%;
+  animation:twinkle2 ease-in-out infinite;
+}
+@keyframes twinkle2{
+  0%,100%{opacity:0;transform:scale(.3);}
+  50%{opacity:1;transform:scale(1);}
+}
+.confetti{
+  position:fixed;width:9px;height:15px;top:-20px;z-index:4;pointer-events:none;
+  animation:fall linear forwards;
+}
+@keyframes fall{
+  0%{transform:translateY(0) rotate(0deg);opacity:1;}
+  100%{transform:translateY(105vh) rotate(720deg);opacity:.8;}
+}
+
+/* ── BANNER ── */
+.banner{
+  position:fixed;bottom:0;left:0;width:200%;
+  padding:10px 0;
+  background:linear-gradient(90deg,var(--pink),var(--gold),#b06eff,var(--pink));
+  color:#2a0a4a;font-weight:bold;white-space:nowrap;
+  font-size:.95rem;letter-spacing:2px;font-family:sans-serif;
+  animation:slide 18s linear infinite;
+  z-index:45;display:none;
+}
+@keyframes slide{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+.banner.show{display:block;}
+
+/* ── MUSIC NOTE TOGGLE ── */
+#music-btn{
+  position:fixed;top:calc(14px + var(--safe-top));right:14px;
+  z-index:55;
+  background:rgba(255,255,255,.1);
+  border:1px solid rgba(255,255,255,.2);
+  border-radius:50%;width:44px;height:44px;
+  display:none;align-items:center;justify-content:center;
+  font-size:1.3rem;cursor:pointer;
+  backdrop-filter:blur(8px);
+  transition:background .2s;
+}
+#music-btn.show{display:flex;}
+#music-btn:hover{background:rgba(255,255,255,.2);}
+
+@media(max-width:400px){
+  .pin-input{width:44px;height:54px;font-size:1.4rem;}
+  .cd-block{min-width:52px;padding:10px 12px;}
+}
+</style>
+</head>
+<body>
+
+<!-- STARS -->
+<div id="stars"></div>
+
+<!-- FIREWORK CANVAS -->
+<canvas id="burst-canvas"></canvas>
+
+<!-- MUSIC -->
+<button id="music-btn" title="Toggle music" aria-label="Toggle music">🎵</button>
+<audio id="audio" loop>
+  <!-- put an mp3 URL here if you have one -->
+</audio>
+
+<!-- ═══════════ PIN SCREEN ═══════════ -->
+<div id="pin-screen">
+  <div class="lock-icon">🎁</div>
+  <h1>A Gift Awaits You 🌸</h1>
+  <p>Enter the secret code to unlock something made<br>just for you, Emily Lux.y 💖</p>
+
+  <div class="pin-row" id="pin-row-1">
+    <input class="pin-input" type="tel" maxlength="1" inputmode="numeric" data-idx="0" aria-label="Day digit 1">
+    <input class="pin-input" type="tel" maxlength="1" inputmode="numeric" data-idx="1" aria-label="Day digit 2">
+    <span class="pin-sep">-</span>
+    <input class="pin-input" type="tel" maxlength="1" inputmode="numeric" data-idx="2" aria-label="Month digit 1">
+    <input class="pin-input" type="tel" maxlength="1" inputmode="numeric" data-idx="3" aria-label="Month digit 2">
+    <span class="pin-sep">-</span>
+    <input class="pin-input" type="tel" maxlength="1" inputmode="numeric" data-idx="4" aria-label="Year digit 1">
+    <input class="pin-input" type="tel" maxlength="1" inputmode="numeric" data-idx="5" aria-label="Year digit 2">
+    <input class="pin-input" type="tel" maxlength="1" inputmode="numeric" data-idx="6" aria-label="Year digit 3">
+    <input class="pin-input" type="tel" maxlength="1" inputmode="numeric" data-idx="7" aria-label="Year digit 4">
+  </div>
+
+  <button id="unlock-btn">Open my gift 💝</button>
+  <div id="err-msg" role="alert"></div>
+  <p class="hint">Hint: your birthday date — DD-MM-YYYY 😉<br>e.g. 20-10-2026</p>
+</div>
+
+<!-- ═══════════ CELEBRATION ═══════════ -->
+<div id="celebration">
+
+  <h1 class="cel-title">Happy Birthday<br>Emily Lux.y! 🎂</h1>
+  <p class="cel-sub">✨ Today the whole universe celebrates YOU Karembo ✨</p>
+
+  <!-- Photo carousel – swap URLs with real photos! -->
+  <div class="carousel">
+    <div class="photo active" style="background-image:url('https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=600');"></div>
+    <div class="photo" style="background-image:url('https://images.unsplash.com/photo-1513151233558-d860c5398176?w=600');"></div>
+    <div class="photo" style="background-image:url('https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?w=600');"></div>
+    <div class="photo" style="background-image:url('https://images.unsplash.com/photo-1578922746465-3a80a228f223?w=600');"></div>
+  </div>
+
+  <div class="msg-card">
+    Dear <span class="name">Emily</span>,<br><br>
+    You light up every room you walk into. Your laugh is contagious,
+    your heart is golden, and the world is genuinely a better place
+    because you're in it. 🌟<br><br>
+    May this year bring you everything you deserve —
+    <strong>much love bestie wa mine.💖</strong>
+    Beautiful soul, feel the birthday aura. 👑
+    <strong>joy, adventure, love,</strong> and endless reasons to smile.<br><br>
+    Here's to YOU, beautiful soul. 💖<br>
+    <strong>Happy Birthday! 🎉</strong>
+  </div>
+
+  <div class="wishes">
+    <div class="wish-item">
+      <span class="wish-icon">🌸</span>
+      <div class="wish-text"><b>May every day</b> feel like the first day of spring — full of possibility and warmth.</div>
+    </div>
+    <div class="wish-item">
+      <span class="wish-icon">✈️</span>
+      <div class="wish-text"><b>May this year</b> take you somewhere you've always dreamed of going.</div>
+    </div>
+    <div class="wish-item">
+      <span class="wish-icon">💫</span>
+      <div class="wish-text"><b>May you always</b> know how deeply loved and cherished you truly are.</div>
+    </div>
+    <div class="wish-item">
+      <span class="wish-icon">🎂</span>
+      <div class="wish-text"><b>May your cake</b> be perfect, your candles all blown out in one breath, and your wish come true.</div>
+    </div>
+    <div class="wish-item">
+        <span class="wish-icon">💝</span>
+        <div class="wish-text"><b>May your smile</b> last forever, great stories to have with you nakupenda msupa.</div>
+    </div>
+  </div>
+
+  <div class="countdown-wrap" id="next-birthday-wrap">
+    <p>DAYS UNTIL NEXT BIRTHDAY</p>
+    <div class="countdown-nums" id="countdown"></div>
+  </div>
+
+</div>
+
+<!-- SCROLLING BANNER -->
+<div class="banner" id="banner"></div>
+
+<script>
+/* ── CONFIG — change these ── */
+const BDAY_DAY   = 20;   // ← her birthday day
+const BDAY_MONTH = 10;   // ← her birthday month (October = 10)
+// year is taken automatically from the current year or next
+
+/* ── Build correct PIN from today's date ──
+   Format: DDMMYYYY of her birthday in the current year */
+function buildPin(){
+  const now = new Date();
+  const d = String(BDAY_DAY).padStart(2,'0');
+  const m = String(BDAY_MONTH).padStart(2,'0');
+  const y = String(now.getFullYear());
+  return d + m + y;
+}
+const CORRECT_PIN = buildPin(); // e.g. "22102026"
+
+/* ── Stars ── */
+(function spawnStars(){
+  const c = document.getElementById('stars');
+  for(let i=0;i<140;i++){
+    const s=document.createElement('div');
+    s.className='star';
+    s.style.cssText=`
+      width:${1+Math.random()*2.5}px;
+      height:${1+Math.random()*2.5}px;
+      left:${Math.random()*100}vw;
+      top:${Math.random()*100}vh;
+      animation-duration:${2+Math.random()*4}s;
+      animation-delay:${Math.random()*4}s;
+    `;
+    c.appendChild(s);
+  }
+})();
+
+/* ── PIN inputs logic ── */
+const inputs = [...document.querySelectorAll('.pin-input')];
+const errMsg = document.getElementById('err-msg');
+
+inputs.forEach((inp,i)=>{
+  inp.addEventListener('input',()=>{
+    inp.value = inp.value.replace(/\D/g,'').slice(-1);
+    if(inp.value && i < inputs.length-1) inputs[i+1].focus();
+  });
+  inp.addEventListener('keydown',e=>{
+    if(e.key==='Backspace'&&!inp.value&&i>0) inputs[i-1].focus();
+    if(e.key==='Enter') tryUnlock();
+  });
+  inp.addEventListener('paste',e=>{
+    e.preventDefault();
+    const txt=(e.clipboardData||window.clipboardData).getData('text').replace(/\D/g,'');
+    [...txt].forEach((ch,j)=>{ if(inputs[i+j]) inputs[i+j].value=ch; });
+    const next=Math.min(i+txt.length, inputs.length-1);
+    inputs[next].focus();
+  });
+});
+
+document.getElementById('unlock-btn').addEventListener('click',tryUnlock);
+
+function tryUnlock(){
+  const entered = inputs.map(i=>i.value).join('');
+  if(entered.length < 8){
+    errMsg.textContent='🫣 Fill in all the digits!';
+    return;
+  }
+  if(entered === CORRECT_PIN){
+    errMsg.textContent='';
+    unlock();
+  } else {
+    errMsg.textContent='❌ Not quite... try again! 💭';
+    const row = document.getElementById('pin-row-1');
+    row.classList.remove('shake');
+    void row.offsetWidth;
+    row.classList.add('shake');
+    inputs.forEach(i=>i.value='');
+    inputs[0].focus();
+  }
+}
+
+/* ── Unlock sequence ── */
+function unlock(){
+  const ps = document.getElementById('pin-screen');
+  ps.classList.add('hide');
+
+  // Launch fireworks immediately
+  const fc = document.getElementById('burst-canvas');
+  fc.style.display='block';
+  fireworkBurst(()=>{fc.style.display='none';});
+
+  setTimeout(()=>{
+    ps.style.display='none';
+    const cel = document.getElementById('celebration');
+    cel.classList.add('show');
+    document.querySelector('.banner').classList.add('show');
+    document.getElementById('music-btn').classList.add('show');
+    startCelebration();
+    startCountdown();
+    buildBanner();
+    tryPlayMusic();
+  },700);
+}
+
+/* ── Firework canvas burst ── */
+function fireworkBurst(done){
+  const canvas=document.getElementById('burst-canvas');
+  const W=canvas.width=window.innerWidth;
+  const H=canvas.height=window.innerHeight;
+  const ctx=canvas.getContext('2d');
+  const particles=[];
+  const COLORS=['#ff6ec7','#ffd700','#b06eff','#7cf0ff','#7cff9a','#ff9f7c'];
+
+  // launch 8 rockets from bottom
+  for(let r=0;r<8;r++){
+    const cx=(W*.15)+Math.random()*(W*.7);
+    const cy=(H*.1)+Math.random()*(H*.5);
+    const color=COLORS[r%COLORS.length];
+    for(let i=0;i<80;i++){
+      const angle=(Math.PI*2/80)*i;
+      const speed=2+Math.random()*6;
+      particles.push({
+        x:cx,y:cy,
+        vx:Math.cos(angle)*speed,
+        vy:Math.sin(angle)*speed,
+        alpha:1,color,
+        size:2+Math.random()*3,
+        gravity:.08+Math.random()*.06,
+      });
+    }
+  }
+
+  let frame=0;
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    frame++;
+    let alive=false;
+    particles.forEach(p=>{
+      p.x+=p.vx; p.y+=p.vy;
+      p.vy+=p.gravity;
+      p.vx*=.98; p.vy*=.98;
+      p.alpha-=.012;
+      if(p.alpha>0){
+        alive=true;
+        ctx.globalAlpha=p.alpha;
+        ctx.fillStyle=p.color;
+        ctx.beginPath();
+        ctx.arc(p.x,p.y,p.size,0,Math.PI*2);
+        ctx.fill();
+      }
+    });
+    if(alive && frame<300) requestAnimationFrame(draw);
+    else done();
+  }
+  requestAnimationFrame(draw);
+}
+
+/* ── Floating hearts ── */
+function spawnHearts(){
+  const emojis=['💖','💕','🎈','🌸','💝','✨','🌟','💫','🎀'];
+  setInterval(()=>{
+    const h=document.createElement('div');
+    h.className='heart';
+    h.textContent=emojis[Math.floor(Math.random()*emojis.length)];
+    h.style.cssText=`
+      left:${Math.random()*100}vw;
+      font-size:${14+Math.random()*22}px;
+      animation-duration:${7+Math.random()*6}s;
+      animation-delay:${Math.random()*.5}s;
+    `;
+    document.body.appendChild(h);
+    setTimeout(()=>h.remove(),14000);
+  },400);
+}
+
+/* ── Sparkles ── */
+function spawnSparkles(){
+  const COLS=['#ffd700','#ff6ec7','#b06eff','#7cf0ff'];
+  setInterval(()=>{
+    const s=document.createElement('div');
+    s.className='sparkle';
+    s.style.cssText=`
+      left:${Math.random()*100}vw;
+      top:${Math.random()*100}vh;
+      background:${COLS[Math.floor(Math.random()*COLS.length)]};
+      box-shadow:0 0 8px currentColor;
+      animation-duration:${1.2+Math.random()*2}s;
+    `;
+    document.body.appendChild(s);
+    setTimeout(()=>s.remove(),3500);
+  },180);
+}
+
+/* ── Confetti burst ── */
+function launchConfetti(){
+  const COLS=['#ff6ec7','#ffd700','#7cf0ff','#b06eff','#7cff9a','#ff9f7c'];
+  for(let i=0;i<160;i++){
+    setTimeout(()=>{
+      const c=document.createElement('div');
+      c.className='confetti';
+      c.style.cssText=`
+        left:${Math.random()*100}vw;
+        background:${COLS[Math.floor(Math.random()*COLS.length)]};
+        animation-duration:${2.5+Math.random()*3}s;
+        transform:rotate(${Math.random()*360}deg);
+        width:${6+Math.random()*8}px;
+        height:${10+Math.random()*10}px;
+        border-radius:${Math.random()>0.5?'50%':'2px'};
+      `;
+      document.body.appendChild(c);
+      setTimeout(()=>c.remove(),6000);
+    },i*30);
+  }
+}
+
+/* ── Photo carousel ── */
+function rotatePhotos(){
+  const photos=[...document.querySelectorAll('.photo')];
+  let idx=0;
+  setInterval(()=>{
+    photos[idx].classList.remove('active');
+    idx=(idx+1)%photos.length;
+    photos[idx].classList.add('active');
+  },3500);
+}
+
+/* ── Countdown to next birthday ── */
+function startCountdown(){
+  function tick(){
+    const now=new Date();
+    let next=new Date(now.getFullYear(),BDAY_MONTH-1,BDAY_DAY,0,0,0);
+    if(next<=now) next.setFullYear(next.getFullYear()+1);
+    const diff=next-now;
+    const days=Math.floor(diff/86400000);
+    const hrs=Math.floor((diff%86400000)/3600000);
+    const mins=Math.floor((diff%3600000)/60000);
+    const secs=Math.floor((diff%60000)/1000);
+
+    // If today is her birthday, show special message
+    if(now.getDate()===BDAY_DAY && now.getMonth()===BDAY_MONTH-1){
+      document.getElementById('next-birthday-wrap').innerHTML=
+        '<p style="color:var(--gold);font-family:sans-serif;font-size:1rem;letter-spacing:2px;">🎉 TODAY IS THE DAY! 🎉</p>';
+      return;
+    }
+    const el=document.getElementById('countdown');
+    el.innerHTML=[
+      {n:days,l:'DAYS'},
+      {n:hrs,l:'HRS'},
+      {n:mins,l:'MINS'},
+      {n:secs,l:'SECS'},
+    ].map(({n,l})=>`
+      <div class="cd-block">
+        <div class="cd-num">${String(n).padStart(2,'0')}</div>
+        <div class="cd-label">${l}</div>
+      </div>
+    `).join('');
+  }
+  tick();
+  setInterval(tick,1000);
+}
+
+/* ── Banner ── */
+function buildBanner(){
+  const b=document.getElementById('banner');
+  const t='🎉 Happy Birthday Emily Lux.y 🎂  •  You are so loved 💖  •  Shine bright ✨  •  Make a wish 🌟  •  You are amazing 🌸  •  ';
+  b.textContent=t.repeat(5);
+}
+
+/* ── Music ── */
+function tryPlayMusic(){
+  const audio=document.getElementById('audio');
+  if(!audio.src) return;
+  audio.play().catch(()=>{});
+}
+document.getElementById('music-btn').addEventListener('click',()=>{
+  const a=document.getElementById('audio');
+  const btn=document.getElementById('music-btn');
+  if(a.paused){a.play();btn.textContent='🎵';}
+  else{a.pause();btn.textContent='🔇';}
+});
+
+/* ── Start everything ── */
+function startCelebration(){
+  launchConfetti();
+  spawnHearts();
+  spawnSparkles();
+  rotatePhotos();
+  // Repeat confetti bursts
+  setInterval(launchConfetti,18000);
+}
+</script>
+</body>
+</html>
